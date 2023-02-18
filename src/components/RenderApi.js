@@ -1,40 +1,16 @@
 import React, { useState, useEffect } from "react";
-
-const Card = ({ data }) => {
-  const [like, setLike] = useState(0);
-
-  const handleLike = () => {
-    setLike(like + 1);
-  };
-
-  return (
-    <div className="card border-primary text-secondary bg-transparent mt-5 " key={data.id}>
-      <img src={`https://picsum.photos/200?random=${data.id}`} className="card-img-top" alt="..." />
-      <div className="card-body">
-        <h5 className="card-title">
-          User ID: <span>{data.id}</span>
-        </h5>
-        <p className="card-text">Title : {data.title}</p>
-        <p className="card-text">Likes : {like}</p>
-      </div>
-      <div className="card-footer bg-transparent">
-        <div className="d-grid gap-2">
-          <button onClick={handleLike} className="btn btn-outline-secondary rounded-pill" type="button">
-            Like Post
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import CardData from "./CardData";
+// import { uuid } from 'uuidv4';
+// import { v4 as uuidv4 } from 'uuid';
 
 const RenderApi = () => {
   const [user, setUser] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(0);
 
   const getData = async () => {
     try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts?_page=$%7Bpage%7D&_limit=20");
+      const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=20`);
       setUser(await response.json());
     } catch (error) {
       console.log("Error: " + error);
@@ -43,10 +19,15 @@ const RenderApi = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [page]);
 
   const handleSearch = (event) => {
     setSearchText(event.target.value);
+  };
+
+  const handlePage = () => {
+    setPage(page + 1);
+    console.log(setPage);
   };
 
   const filteredData = user.filter((data) => {
@@ -57,25 +38,21 @@ const RenderApi = () => {
     <>
       <div className="container-fluid mt-5">
         <div className="col-auto">
-          <input
-            type="text"
-            className="form-control rounded-pill bg-transparent text-light p-3"
-            id="a"
-            placeholder="Search by title..."
-            value={searchText}
-            onChange={handleSearch}
-          />
+          <input type="text" className="form-control rounded-pill bg-transparent text-light p-3" id="a" placeholder="Search..." value={searchText} onChange={handleSearch} />
         </div>
         <div className="wrapper row">
           {filteredData.map((data) => {
-            return <Card data={data} />;
+            return <CardData e={data} />;
           })}
         </div>
+      </div>
+      <div className="text-center">
+      <button onClick={handlePage} className="btn btn-light rounded-pill m-5 px-5" type="button">
+      Load More Posts
+      </button>
       </div>
     </>
   );
 };
 
 export default RenderApi;
-
-
