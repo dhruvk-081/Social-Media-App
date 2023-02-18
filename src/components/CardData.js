@@ -3,6 +3,7 @@ import React, { useState } from "react";
 const CardData = ({ e }) => {
   const [like, setLike] = useState(0);
 
+  // console.log("key is",e.id)
   const handleLike = () => {
     setLike(like + 1);
   };
